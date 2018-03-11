@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset=utf-8 />
+    <title>A Leaflet map!</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+
+    <!-- include scripts and css here -->
+    <link rel="stylesheet" href="leaflet.css" />
+    <script src="leaflet.js"></script>
+    <script type="text/javascript" src="neighborhoods.geojson"></script>
+    <script src="places.json"></script>
+
+</head>
+<body>
+
+
+    <!-- STYLES -->
+    <style>
+    #map {
+        width: 100%;
+        height:500px;
+    }  
+    </style>
+
+    <!-- Map html here -->
+    <div id="map"></div>
+
+
+
+    <!-- JavaScript here -->
+     <script>
+        var map = L.map('map');
+        L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}', {
+            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            subdomains: 'abcd',
+            minZoom: 1,
+            maxZoom: 16,
+            ext: 'png'
+        }).addTo(map);
+          map.setView([41.8781, -87.6298], 9);
+
+            var myIcon = L.icon({
+                iconUrl: 'https://cldup.com/jsXu-OReqo-3000x3000.png',
+                iconSize: [50,50],
+                iconAnchor: [24,50],
+                popupAnchor: [1,-50]
+            });
+            var myMarker = L.marker([41.8781, -87.6298], {
+              icon: myIcon      
+            }).addTo(map);
+
+             myMarker.bindPopup("Hi. I'm a popup. <br> Customize me.");
+
+             var layerGroup = L.geoJSON(neighborhoods, {
+                onEachFeature: function (feature, layer) {
+                    layer.bindPopup('<h1>'+feature.properties.community+'</h1>');
+                }, style: setStyle
+            }).addTo(map);
+
+             function setStyle(feature) {
+  return {
+    opacity: 1,
+    weight: 1,
+    color: "blue",
+    fillOpacity: 0.2
+  }
+}
+
+for (var num = 0; num < places.length; num++) {
+  var place = places[num];
+  var place_lat = place["Lat"];
+  var place_long = place["Lng"];
+  
+  var marker = L.marker([place_lat, place_long]).addTo(map);
+  var popup_html = '<div>Latitude: ' + place_lat + '</div>';
+  popup_html += '<div>Longitude: ' + place_long + '</div>';
+  marker.bindPopup(popup_html);
+}
+
+    </script>
+
+</body>
+<html>
